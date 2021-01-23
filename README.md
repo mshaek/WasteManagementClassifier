@@ -1,6 +1,6 @@
 # WasteManagementClassifier
 
-## Project: Classifying waste into organic and inorganic
+## Project: Classifying Waste into Organic and Inorganic
 ### Contributor: 
 Phillip, Ridzwan and Mahfuzur
 
@@ -44,27 +44,46 @@ Epochs= 10
 ### Training Evaluation Metrics
  #### of classes:    2
  Accuracy:        0.8039
+ 
  Precision:       0.8059
+ 
  Recall:          0.8007
+ 
  F1 Score:        0.8033
  
- ===Training Confusion Matrix=========================
-    0    1
+
+===Training Confusion Matrix=========================
+
+  0    1
+
 -----------
- 5650 1350 | 0 = 0
- 1395 5604 | 1 = 1
+
+5650 1350 | 0 = 0
+ 
+
+1395 5604 | 1 = 1
  
  
  ### Validation Metrics
  #### of classes:    2
- Accuracy:        0.8183
- Precision:       0.8135
- Recall:          0.8260
- F1 Score:        0.8197
+
+Accuracy:        0.8183
+
+Precision:       0.8135
+
+Recall:          0.8260
+
+F1 Score:        0.8197
  
  ===Validation Confusion Matrix=========================
-    0    1
+
+0    1
+
 -----------
- 2431  568 | 0 = 0
-  522 2478 | 1 = 1
+
+2431  568 | 0 = 0
+
+522 2478 | 1 = 1
+
+## Total Training Time: Aprox 3:30 hours
 
