@@ -32,3 +32,39 @@ Training data - 22564 images  Test data - 2513 images
 
 ### Data Source: 
 Data Collected from Kaggle. Link: https://www.kaggle.com/techsash/waste-classification-data
+
+### Model Training
+Input Image Size= 80 x 80 Color
+Number of Classes = 2
+Learning rate= 0.001
+Image Tranformation= Flip, RandomCrop, Rotate
+Batch Size= 32
+Epochs= 10
+
+### Training Evaluation Metrics
+ #### of classes:    2
+ Accuracy:        0.8039
+ Precision:       0.8059
+ Recall:          0.8007
+ F1 Score:        0.8033
+ 
+ ===Training Confusion Matrix=========================
+    0    1
+-----------
+ 5650 1350 | 0 = 0
+ 1395 5604 | 1 = 1
+ 
+ 
+ ### Validation Metrics
+ #### of classes:    2
+ Accuracy:        0.8183
+ Precision:       0.8135
+ Recall:          0.8260
+ F1 Score:        0.8197
+ 
+ ===Validation Confusion Matrix=========================
+    0    1
+-----------
+ 2431  568 | 0 = 0
+  522 2478 | 1 = 1
+
