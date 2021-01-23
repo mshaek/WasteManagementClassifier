@@ -4,6 +4,8 @@
 ### Contributor: 
 Phillip, Ridzwan and Mahfuzur
 
+*Output Gist Can be viewed from:*  https://gist.github.com/mshaek/f89bcd760047c1fc44a836e6e83281c6
+
 ### Problem Statement:
 Waste management is a big problem in our country. Most of the wastes end up in landfills. This leads to many issues like
 
