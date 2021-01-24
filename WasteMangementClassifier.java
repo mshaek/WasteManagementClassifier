@@ -1,15 +1,9 @@
 package ai.certifai.solution.classification;
 
 import org.datavec.image.loader.BaseImageLoader;
-import org.datavec.image.transform.FlipImageTransform;
-import org.datavec.image.transform.ImageTransform;
-import org.datavec.image.transform.PipelineImageTransform;
-import org.datavec.image.transform.RandomCropTransform;
+import org.datavec.image.transform.*;
 import org.deeplearning4j.core.storage.StatsStorage;
-import org.deeplearning4j.nn.conf.ConvolutionMode;
-import org.deeplearning4j.nn.conf.GradientNormalization;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.*;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -21,6 +15,7 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.model.stats.StatsListener;
 import org.deeplearning4j.ui.model.storage.InMemoryStatsStorage;
+import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.UNet;
@@ -39,7 +34,7 @@ import java.util.List;
 import java.util.Random;
 
 public class WasteMangementClassifier {
-    private static int epochs = 10; //120
+    private static int epochs = 3; //120
 
     private static int seed = 123;
     private static Random rng = new Random(seed);
@@ -49,7 +44,7 @@ public class WasteMangementClassifier {
     private static double lr = 1e-3;
     private static double trainPercent= 0.7;
     private static String [] allowedExt = BaseImageLoader.ALLOWED_FORMATS;
-    private static int batchSize= 32;
+    private static int batchSize= 16;
     private static int nOutput = 2;
 
 
@@ -58,9 +53,9 @@ public class WasteMangementClassifier {
 
         File myFile = new ClassPathResource("WasteManagement/TRAIN").getFile();
 
-        FlipImageTransform hFlip = new FlipImageTransform(0);
+        FlipImageTransform hFlip = new FlipImageTransform(1);
         ImageTransform rCrop = new RandomCropTransform(seed, 50, 50);
-        ImageTransform rotate = new RandomCropTransform(seed, 50, 50);
+        ImageTransform rotate = new RotateImageTransform(5);
 
         List<Pair<ImageTransform, Double>> pipeline = Arrays.asList(
                 new Pair<>(hFlip, 0.3),
@@ -87,7 +82,7 @@ public class WasteMangementClassifier {
                 .updater(new Adam(0.001))
                 .convolutionMode(ConvolutionMode.Same)
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
-                .l2(5 * 1e-4)
+                .l2(5 * 1e-5)
                 .list()
                 .layer(0, new ConvolutionLayer.Builder(new int[]{11,11}, new int[]{4, 4})
                         .name("cnn1")
@@ -150,13 +145,14 @@ public class WasteMangementClassifier {
                         .biasInit(nonZeroBias)
                         .dropOut(dropOut)
                         .build())
-                .layer(12, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .layer(12, new OutputLayer.Builder(LossFunctions.LossFunction.XENT)
                         .name("output")
                         .nOut(nOutput)
-                        .activation(Activation.SOFTMAX)
+                        .activation(Activation.SIGMOID)
                         .weightInit(WeightInit.XAVIER)
                         .build())
                 .setInputType(InputType.convolutional(height, width, nChannel))
+                //.backpropType(BackpropType.Standard)
                 .build();
 
 
@@ -177,6 +173,10 @@ public class WasteMangementClassifier {
         );
 
         model.fit(trainIter, epochs );
+
+        File modelFilename = new File(System.getProperty("user.dir"), "generated-models/WasteClassifier.zip");
+        ModelSerializer.writeModel(model, modelFilename, true);
+        System.out.println("Model saved.");
 
         Evaluation evalTrain = model.evaluate(trainIter);
         Evaluation evalTest = model.evaluate(testIter);
